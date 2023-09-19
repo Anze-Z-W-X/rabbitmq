@@ -3,6 +3,7 @@ package com.rabbitmq.one;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.utils.RabbitMqUtills;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -11,18 +12,8 @@ public class Producer {
     //队列名称
     public static final String QUEUE_NAME="hello";
     //发消息
-    public static void main(String[] args) throws IOException, TimeoutException {
-        //创建一个链接工厂
-        ConnectionFactory factory = new ConnectionFactory();
-        //工厂ip，连接RabbitMQ队列
-        factory.setHost("192.168.164.129");
-        //用户名
-        factory.setUsername("admin");
-        //密码
-        factory.setPassword("@200312Zwx");
-        Connection connection = factory.newConnection();
-        //获取信道
-        Channel channel = connection.createChannel();
+    public static void main(String[] args) throws Exception {
+        Channel channel = RabbitMqUtills.getChannel();
         /*
         *1.队列名称
         *2.队列消息是否持久化

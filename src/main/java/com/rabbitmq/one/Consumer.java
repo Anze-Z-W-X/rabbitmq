@@ -1,17 +1,12 @@
 package com.rabbitmq.one;
 
 import com.rabbitmq.client.*;
+import com.rabbitmq.utils.RabbitMqUtills;
 
 public class Consumer {
     private final static String QUEUE_NAME = "hello";
     public static void main(String[] args) throws Exception {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("192.168.164.129");
-        factory.setUsername("admin");
-        factory.setPassword("@200312Zwx");
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
-        System.out.println("等待接收消息....");
+        Channel channel = RabbitMqUtills.getChannel();
         //推送的消息如何进行消费的接口回调
         DeliverCallback deliverCallback=(consumerTag, delivery)->{
             String message= new String(delivery.getBody());
