@@ -11,10 +11,13 @@ public class Work04 {
 
     public static void main(String[] args) throws Exception {
         Channel channel = RabbitMqUtills.getChannel();
-        System.out.println("C2等待消息处理（时间较短）");
+        //开启发布确认
+        channel.confirmSelect();
+
+        System.out.println("C2等待消息处理（时间较长）");
 
         DeliverCallback deliverCallback = (consumerTag,message) ->{
-            //沉睡1s
+            //沉睡10s
             SleepUtils.sleep(10);
             System.out.println("接收到的消息:"+new String(message.getBody(),"UTF-8"));
             /*
@@ -27,6 +30,9 @@ public class Work04 {
         CancelCallback cancelCallback=(consumerTag)->{
             System.out.println("消息消费被中断");
         };
+        //设置不公平分发,默认为0,prefetchCount为预取值，表示一次分到多少条channel
+        int prefetchCount = 1;
+        channel.basicQos(prefetchCount);
         //采用手动应答
         boolean autoAck = false;
         channel.basicConsume(TASK_QUEUE_NAME,autoAck,deliverCallback,cancelCallback);
