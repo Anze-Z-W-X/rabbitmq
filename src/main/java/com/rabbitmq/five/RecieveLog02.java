@@ -26,7 +26,7 @@ public class RecieveLog02 {
 
         //接收消息
         DeliverCallback deliverCallback = (consumerTag,message)->{
-            System.out.println("RecieveLog02控制台打印接收的消息");
+            System.out.println("RecieveLog02控制台打印接收的消息"+new String(message.getBody()));
         };
         //消费者取消消息回调接口
         CancelCallback cancelCallback=(consumerTag)->{

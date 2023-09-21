@@ -1,16 +1,13 @@
-package com.rabbitmq.five;
+package com.rabbitmq.six;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.utils.RabbitMqUtills;
 
 import java.util.Scanner;
 
-/*
-* 发消息给交换机
-* */
-public class EmitLog {
+public class DirectLogs {
     //交换机的名称
-    public static final String EXCHANGE_NAME = "logs";
+    public static final String EXCHANGE_NAME = "direct_logs";
 
     public static void main(String[] args) throws Exception {
         Channel channel = RabbitMqUtills.getChannel();
@@ -27,7 +24,8 @@ public class EmitLog {
              * 3.其他的参数信息
              * 4.发送消息的消息体
              * */
-            channel.basicPublish(EXCHANGE_NAME,"",null,message.getBytes("UTF-8"));
+            //s1为routing key
+            channel.basicPublish(EXCHANGE_NAME,"error",null,message.getBytes("UTF-8"));
             System.out.println("生产者发出消息:"+message);
         }
     }
