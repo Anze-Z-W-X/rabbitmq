@@ -33,7 +33,7 @@ public class Consumer01 {
         arguments.put("x-dead-letter-exchange",DEAD_EXCHANGE);
         //设置死信RoutingKey
         arguments.put("x-dead-letter-routing-key","lisi");
-        //设置队列最大长度
+        //设置正常队列最大长度
         //arguments.put("x-max-length",6);
         channel.queueDeclare(NORMAL_QUEUE,false,false,false,arguments);
         //声明死信队列
@@ -45,13 +45,20 @@ public class Consumer01 {
         channel.queueBind(DEAD_QUEUE,DEAD_EXCHANGE,"lisi");
         System.out.println("等待接收消息......");
 
-        DeliverCallback deliverCallback =
-                (consumerTag,message)->{
-                    System.out.println("Consumer01接收的消息是:"+new String(message.getBody(), StandardCharsets.UTF_8));
-                };
-
-        CancelCallback cancelCallback = consumerTag->{};
-        channel.basicConsume(NORMAL_QUEUE,false,deliverCallback,cancelCallback);
+        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
+            if(message.equals("info5")){
+                System.out.println("Consumer01 接收到消息" + message + "并拒绝签收该消息");
+                //requeue 设置为 false 代表拒绝重新入队 该队列如果配置了死信交换机将发送到死信队列中
+                channel.basicReject(delivery.getEnvelope().getDeliveryTag(), false);
+            }else {
+                System.out.println("Consumer01 接收到消息"+message);
+                channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+            }
+        };
+        boolean autoAck = false;
+        channel.basicConsume(NORMAL_QUEUE, autoAck, deliverCallback, consumerTag -> {
+        });
     }
 
 }
